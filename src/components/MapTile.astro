@@ -1,0 +1,34 @@
+---
+// Click-to-load Google map: keeps pages fast and sends nothing to Google until the visitor asks.
+import Icon from './Icon.astro';
+
+interface Props { query: string; title: string; class?: string }
+const { query, title, class: cls } = Astro.props;
+const src = `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
+---
+<div class:list={['map-tile', cls]} data-src={src} data-title={title}>
+  <button type="button" class="btn btn-ink map-load"><Icon name="arrow" />Show the map</button>
+  <p class="map-note">The map loads from Google only when you ask for it.</p>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.map-tile').forEach((tile) => {
+    tile.querySelector('.map-load')?.addEventListener('click', () => {
+      const f = document.createElement('iframe');
+      f.src = tile.dataset.src!;
+      f.title = tile.dataset.title!;
+      f.loading = 'lazy';
+      f.referrerPolicy = 'no-referrer-when-downgrade';
+      tile.replaceChildren(f);
+      tile.classList.add('is-loaded');
+    });
+  });
+</script>
+
+<style>
+  .map-tile { aspect-ratio: 16 / 9; background: var(--stone-3); display: grid; place-content: center; justify-items: center; gap: 12px; text-align: center; padding: 24px; }
+  .map-tile.is-loaded { display: block; padding: 0; }
+  .map-tile :global(iframe) { width: 100%; height: 100%; border: 0; }
+  .map-note { font-size: var(--step-small); color: var(--muted); }
+  @media (max-width: 760px) { .map-tile { aspect-ratio: 4 / 3; } }
+</style>

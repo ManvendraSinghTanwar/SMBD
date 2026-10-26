@@ -1,0 +1,199 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import ContactBand from '../../components/ContactBand.astro';
+import EnquiryForm from '../../components/EnquiryForm.astro';
+import { services, type Service } from '../../data/services';
+import { site, whatsapp } from '../../site';
+
+export function getStaticPaths() {
+  return services.map((s) => ({ params: { slug: s.slug }, props: { s } }));
+}
+
+const { s } = Astro.props as { s: Service };
+const wa = whatsapp(s.waText);
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: s.faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+<Base title={s.metaTitle} description={s.metaDescription} waText={s.waText}>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <nav class="svc-nav" aria-label="Services">
+    {services.map((o) => (
+      <a href={`/services/${o.slug}`} aria-current={o.slug === s.slug ? 'page' : undefined}>{o.short}</a>
+    ))}
+  </nav>
+
+  <!-- Opening -->
+  <section class="s-hero grid" aria-labelledby="svc-title">
+    <div class="s-hero-text" data-rise>
+      <h1 id="svc-title">{s.name}</h1>
+      <p class="s-lead">{s.promise}</p>
+      <p>{s.intro}</p>
+      <div class="s-actions">
+        <a class="btn btn-ink" href="#enquire">Enquire</a>
+        <a class="btn btn-quiet" href={wa}><Icon name="whatsapp" />WhatsApp us</a>
+      </div>
+    </div>
+    <figure class="s-hero-pic">
+      <div class="photo" data-shutter><img src={s.hero.src} width={s.hero.w} height={s.hero.h} alt={s.hero.alt} style={s.hero.pos ? `object-position:${s.hero.pos}` : undefined} /></div>
+      <figcaption class="cap">{s.short} · representative image</figcaption>
+    </figure>
+  </section>
+
+  <!-- What we do -->
+  <section class="s-what grid" aria-labelledby="what-title">
+    <h2 id="what-title" data-rise>What we do</h2>
+    <ul class="s-what-list">
+      {s.what.map((w, i) => (
+        <li data-rise style={`--d:${i * 70}ms`}>
+          <h3>{w.name}</h3>
+          <p>{w.say}</p>
+        </li>
+      ))}
+    </ul>
+    <figure class="s-what-pic photo" data-shutter>
+      <img src={s.side.src} width={s.side.w} height={s.side.h} alt={s.side.alt} loading="lazy" />
+    </figure>
+  </section>
+
+  <!-- How it works -->
+  <section class="s-steps grid" aria-labelledby="steps-title">
+    <h2 id="steps-title" data-rise>How it works</h2>
+    <ol class="s-steps-list">
+      {s.steps.map((st, i) => (
+        <li data-rise style={`--d:${i * 80}ms`}>
+          <h3>{st.name}</h3>
+          <p>{st.say}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- Projects of this kind -->
+  <section class="s-proj grid" aria-labelledby="proj-title">
+    <div class="s-proj-text" data-rise>
+      <h2 id="proj-title">Projects</h2>
+      <p>Our first {s.short.toLowerCase()} projects are being planned now. Each one will appear here with its location, status and RERA number.</p>
+      <a class="btn btn-ink" href={whatsapp(`Namaste, please tell me when your first ${s.short.toLowerCase()} project launches.`)}><Icon name="whatsapp" />Tell me when you launch</a>
+    </div>
+    <figure class="s-proj-pic">
+      <p class="w-name">[PROJECT NAME] · {s.short}</p>
+      <div class="photo" data-shutter><img src={s.hero.src} width={s.hero.w} height={s.hero.h} alt="" loading="lazy" style="object-position: 50% 75%" /></div>
+      <figcaption class="cap">[City] · In planning · representative image</figcaption>
+    </figure>
+  </section>
+
+  <!-- Questions -->
+  <section class="s-faq grid" aria-labelledby="faq-title">
+    <h2 id="faq-title" data-rise>Questions people ask</h2>
+    <div class="s-faq-list">
+      {s.faqs.map((f, i) => (
+        <details open={i === 0}>
+          <summary>{f.q}<span class="plus" aria-hidden="true"></span></summary>
+          <p>{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <!-- Enquiry -->
+  <section class="s-enq grid" id="enquire" aria-labelledby="enq-title">
+    <div class="s-enq-text" data-rise>
+      <h2 id="enq-title">{s.formTitle}</h2>
+      <p>A partner reads every enquiry and replies on WhatsApp or by phone.</p>
+    </div>
+    <div class="s-enq-form"><EnquiryForm service={s.name} extra={s.extra} /></div>
+  </section>
+
+  <ContactBand waText={s.waText} />
+</Base>
+
+<style>
+  h2 { font-size: var(--step-heading); }
+  .s-lead { font-size: var(--step-lead); line-height: 1.3; }
+
+  .svc-nav { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 var(--margin); }
+  .svc-nav a { flex: none; display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; background: var(--stone-2); text-decoration: none; font-size: var(--step-small); font-weight: 500; transition: background-color var(--dur) var(--ease); }
+  .svc-nav a:hover { background: var(--stone-3); }
+  .svc-nav a[aria-current="page"] { background: var(--ink); color: var(--stone); }
+
+  /* Opening */
+  .s-hero { padding-block: clamp(32px, 6vh, 64px) var(--section-gap); align-items: center; row-gap: 40px; }
+  .s-hero-text { grid-column: 1 / 6; display: grid; gap: 20px; justify-items: start; }
+  .s-hero-text h1 { font-size: clamp(2.5rem, 4.4vw, 4.5rem); line-height: .95; letter-spacing: -.02em; max-width: 10ch; }
+  .s-hero-text p { max-width: 42ch; }
+  .s-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .s-hero-pic { grid-column: 7 / 13; margin-right: calc(-1 * var(--margin)); }
+  .s-hero-pic .photo { height: min(76svh, 780px); }
+  .s-hero-pic .cap { padding-right: var(--margin); }
+
+  /* What we do */
+  .s-what { padding-bottom: var(--section-gap); align-items: start; row-gap: 0; }
+  .s-what h2 { grid-column: 1 / 8; margin-bottom: 48px; }
+  .s-what-list { grid-column: 1 / 8; grid-row: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 40px var(--gutter); }
+  .s-what-list h3, .s-steps-list h3 { font-size: 1.375rem; line-height: 1.15; }
+  .s-what-list p, .s-steps-list p { margin-top: 8px; }
+  .s-what-pic { grid-column: 9 / 13; grid-row: 1 / 3; aspect-ratio: 4 / 5; margin-top: 80px; }
+
+  /* How it works */
+  .s-steps { background: var(--stone-2); padding-block: clamp(80px, 9vw, 140px); row-gap: 48px; }
+  .s-steps h2 { grid-column: 1 / -1; }
+  .s-steps-list { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gutter); }
+  .s-steps-list li { background: var(--stone); padding: 24px 22px 28px; }
+
+  /* Projects */
+  .s-proj { padding-block: var(--section-gap); align-items: end; row-gap: 40px; }
+  .s-proj-text { grid-column: 1 / 5; display: grid; gap: 20px; justify-items: start; }
+  .s-proj-text p { max-width: 36ch; }
+  .s-proj-pic { grid-column: 6 / 13; margin-right: calc(-1 * var(--margin)); }
+  .s-proj-pic .photo { aspect-ratio: 16 / 9; }
+  .s-proj-pic .cap { padding-right: var(--margin); }
+  .w-name { font-size: var(--step-small); color: var(--muted); margin-bottom: 10px; }
+
+  /* Questions */
+  .s-faq { padding-bottom: var(--section-gap); align-items: start; row-gap: 40px; }
+  .s-faq h2 { grid-column: 1 / 5; }
+  .s-faq-list { grid-column: 6 / 13; display: grid; gap: 4px; }
+  details { background: var(--stone-2); }
+  summary { display: flex; justify-content: space-between; align-items: center; gap: 24px; min-height: 64px; padding: 16px 20px; cursor: pointer; list-style: none; font-weight: 500; font-size: 1.125rem; transition: background-color var(--dur) var(--ease); }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { background: var(--stone-3); }
+  details p { padding: 0 20px 22px; max-width: 60ch; }
+  .plus { position: relative; flex: none; width: 16px; height: 16px; }
+  .plus::before, .plus::after { content: ""; position: absolute; left: 0; top: 7px; width: 16px; height: 2px; background: var(--ink); transition: transform var(--dur) var(--ease); }
+  .plus::after { transform: rotate(90deg); }
+  details[open] .plus::after { transform: rotate(0deg); }
+
+  /* Enquiry */
+  .s-enq { background: var(--stone-2); padding-block: clamp(80px, 9vw, 140px); align-items: start; row-gap: 40px; scroll-margin-top: 16px; }
+  .s-enq-text { grid-column: 1 / 5; display: grid; gap: 16px; }
+  .s-enq-text p { max-width: 34ch; }
+  .s-enq-form { grid-column: 6 / 13; }
+
+  @media (max-width: 1024px) {
+    .s-steps-list { grid-template-columns: 1fr 1fr; }
+    .s-faq h2, .s-faq-list, .s-enq-text, .s-enq-form { grid-column: 1 / -1; }
+    .s-enq-text p { max-width: 52ch; }
+  }
+  @media (max-width: 760px) {
+    .svc-nav { padding-top: 4px; }
+    .s-hero-text, .s-hero-pic { grid-column: 1 / -1; }
+    .s-hero-text h1 { font-size: 11vw; }
+    .s-hero-pic { grid-column: 2 / -1; }
+    .s-hero-pic .photo { height: auto; aspect-ratio: 4 / 5; }
+    .s-what h2, .s-what-list, .s-what-pic { grid-column: 1 / -1; grid-row: auto; }
+    .s-what h2 { margin-bottom: 32px; }
+    .s-what-list { grid-template-columns: 1fr; gap: 28px; }
+    .s-what-pic { grid-column: 3 / -1; margin-top: 48px; }
+    .s-steps-list { grid-template-columns: 1fr; gap: 4px; }
+    .s-proj-text, .s-proj-pic { grid-column: 1 / -1; }
+    .s-proj-pic { margin-right: calc(-1 * var(--margin)); }
+    .s-faq h2, .s-faq-list, .s-enq-text, .s-enq-form { grid-column: 1 / -1; }
+    summary { font-size: 1.0625rem; padding: 14px 16px; }
+    details p { padding: 0 16px 18px; }
+  }
+</style>

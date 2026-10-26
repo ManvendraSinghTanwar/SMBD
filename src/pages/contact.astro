@@ -1,0 +1,124 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import EnquiryForm from '../components/EnquiryForm.astro';
+import MapTile from '../components/MapTile.astro';
+import { site, whatsapp } from '../site';
+
+const wa = whatsapp();
+const topic = { name: 'About', label: 'What is it about?', options: ['A home', 'Commercial space', 'A plot', 'Construction on my land', 'Something else'] };
+const next = [
+  { name: 'A partner replies', say: 'Every enquiry is read by one of the partners, who replies on WhatsApp or by phone.' },
+  { name: 'We meet or visit the site', say: 'If it fits what we do, we arrange an office meeting or a visit to the land.' },
+  { name: 'You get it in writing', say: 'Prices, terms and next steps come to you in writing before you decide anything.' },
+];
+const directions = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(site.address)}`;
+---
+<Base
+  title="Contact | Sankat Mochan Builders & Developers"
+  description="Call or WhatsApp +91 77376 33333, email smbd2026@gmail.com, or send an enquiry. A partner of Sankat Mochan Builders & Developers replies."
+>
+  <section class="c-hero grid" aria-labelledby="c-title">
+    <div class="c-hero-text" data-rise>
+      <h1 id="c-title">Contact</h1>
+      <p class="c-lead">Call, WhatsApp, write or visit. A partner answers.</p>
+    </div>
+    <div class="c-hero-actions" data-rise style="--d:100ms">
+      <a class="btn btn-ink" href={site.phoneHref}><Icon name="phone" />Call {site.phoneDisplay}</a>
+      <a class="btn btn-quiet" href={wa}><Icon name="whatsapp" />WhatsApp us</a>
+    </div>
+  </section>
+
+  <section class="c-main grid" aria-labelledby="form-title">
+    <div class="c-form" data-rise>
+      <h2 id="form-title">Send an enquiry</h2>
+      <p class="c-form-intro">Tell us a little about what you are looking for and how to reach you.</p>
+      <EnquiryForm service="a general enquiry" extra={topic} />
+    </div>
+    <aside class="c-direct" aria-labelledby="direct-title" data-rise style="--d:120ms">
+      <h2 id="direct-title" class="c-direct-head">Reach us directly</h2>
+      <dl>
+        <div class="c-big"><dt class="sr-only">Phone</dt><dd><a href={site.phoneHref}>Call {site.phoneDisplay}</a></dd></div>
+        <div><dt>WhatsApp</dt><dd><a class="link" href={wa}>Message {site.phoneDisplay}</a></dd></div>
+        <div><dt>Email</dt><dd><a class="link" href={`mailto:${site.email}`}>{site.email}</a></dd></div>
+        <div><dt>Office</dt><dd>{site.address}<br />{site.city}</dd></div>
+        <div><dt>Hours</dt><dd>{site.hours}</dd></div>
+      </dl>
+      <figure class="c-pic">
+        <div class="photo"><img src="/img/interior-1024.jpg" width="1024" height="683" alt="Representative image: a bright living room" loading="lazy" /></div>
+        <figcaption class="cap">Representative image</figcaption>
+      </figure>
+    </aside>
+  </section>
+
+  <section class="c-visit grid" aria-labelledby="visit-title">
+    <div class="c-visit-text" data-rise>
+      <h2 id="visit-title">Visit the office</h2>
+      <p>{site.address}, {site.city}.</p>
+      <p>Call before you come and one of the partners will be there to meet you.</p>
+      <a class="link" href={directions} target="_blank" rel="noopener">Get directions</a>
+    </div>
+    <MapTile class="c-map" query={site.address.startsWith('[') ? 'India' : `${site.address}, ${site.city}`} title="Office location map" />
+  </section>
+
+  <section class="c-next grid" aria-labelledby="next-title">
+    <h2 id="next-title" data-rise>What happens next</h2>
+    <ul class="c-next-list">
+      {next.map((n, i) => (
+        <li data-rise style={`--d:${i * 80}ms`}>
+          <h3>{n.name}</h3>
+          <p>{n.say}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>
+
+<style>
+  h2 { font-size: var(--step-heading); }
+
+  .c-hero { padding-block: clamp(32px, 6vh, 64px) clamp(56px, 6vw, 96px); align-items: end; row-gap: 28px; }
+  .c-hero-text { grid-column: 1 / 8; display: grid; gap: 16px; }
+  .c-hero-text h1 { font-size: clamp(3rem, 7vw, 7.5rem); line-height: .9; letter-spacing: -.03em; }
+  .c-lead { font-size: var(--step-lead); line-height: 1.3; max-width: 30ch; }
+  .c-hero-actions { grid-column: 8 / 13; display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+
+  .c-main { padding-bottom: clamp(80px, 9vw, 140px); align-items: start; row-gap: 56px; }
+  .c-form { grid-column: 1 / 8; background: var(--stone-2); padding: clamp(24px, 3vw, 48px); display: grid; gap: 16px; }
+  .c-form-intro { margin-bottom: 12px; max-width: 46ch; }
+  .c-direct { grid-column: 9 / 13; }
+  .c-direct-head { font-size: var(--step-lead); margin-bottom: 24px; }
+  .c-direct dl { margin: 0; display: grid; gap: 24px; }
+  .c-direct dt { font-size: var(--step-small); color: var(--muted); }
+  .c-direct dd { margin: 4px 0 0; font-weight: 500; overflow-wrap: anywhere; }
+  .c-big dd a { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.75rem, 2.4vw, 2.5rem); line-height: 1.1; text-decoration: none; color: var(--forest); transition: color var(--dur) var(--ease); }
+  .c-big dd a:hover { color: var(--ink); }
+  .c-pic { margin-top: 40px; }
+  .c-pic .photo { aspect-ratio: 4 / 5; }
+
+  .c-visit { background: var(--stone-2); padding-block: clamp(80px, 9vw, 140px); align-items: center; row-gap: 32px; }
+  .c-visit-text { grid-column: 1 / 5; display: grid; gap: 14px; justify-items: start; }
+  .c-visit-text p { max-width: 36ch; }
+  .c-visit :global(.c-map) { grid-column: 6 / 13; }
+
+  .c-next { padding-block: clamp(80px, 9vw, 140px); row-gap: 40px; }
+  .c-next h2 { grid-column: 1 / -1; }
+  .c-next-list { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); }
+  .c-next-list li { background: var(--stone-2); padding: 24px 22px 28px; }
+  .c-next-list h3 { font-size: 1.375rem; line-height: 1.15; }
+  .c-next-list p { margin-top: 8px; }
+
+  @media (max-width: 1024px) {
+    .c-form, .c-direct, .c-visit-text, .c-visit :global(.c-map) { grid-column: 1 / -1; }
+    .c-direct dl { grid-template-columns: 1fr 1fr; }
+    .c-big { grid-column: 1 / -1; }
+    .c-pic .photo { aspect-ratio: 16 / 9; }
+  }
+  @media (max-width: 760px) {
+    .c-hero-text, .c-hero-actions { grid-column: 1 / -1; justify-content: flex-start; }
+    .c-hero-text h1 { font-size: 16vw; }
+    .c-form { margin-inline: calc(-1 * var(--margin)); padding: 32px var(--margin); }
+    .c-direct dl { grid-template-columns: 1fr; }
+    .c-next-list { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>

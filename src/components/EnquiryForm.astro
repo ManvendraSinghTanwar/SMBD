@@ -1,0 +1,97 @@
+---
+// Enquiry form. Until a form service is connected, sending opens WhatsApp with the details filled in.
+import Icon from './Icon.astro';
+import { site } from '../site';
+
+interface Props { service: string; extra: { name: string; label: string; options: string[] } }
+const { service, extra } = Astro.props;
+---
+<form class="enq" data-service={service} novalidate>
+  <div class="field">
+    <label for="enq-name">Your name</label>
+    <input id="enq-name" name="Name" type="text" autocomplete="name" required aria-describedby="enq-name-err" />
+    <p class="err" id="enq-name-err" hidden>Enter your name so we know who to ask for.</p>
+  </div>
+  <div class="field">
+    <label for="enq-phone">Phone or WhatsApp number</label>
+    <input id="enq-phone" name="Phone" type="tel" autocomplete="tel" inputmode="tel" required aria-describedby="enq-phone-hint enq-phone-err" />
+    <p class="hint" id="enq-phone-hint">Indian or international, with country code if outside India.</p>
+    <p class="err" id="enq-phone-err" hidden>That number looks too short. Check it and try again.</p>
+  </div>
+  <div class="field">
+    <label for="enq-city">City or area</label>
+    <input id="enq-city" name="City" type="text" autocomplete="address-level2" />
+  </div>
+  <div class="field">
+    <label for="enq-extra">{extra.label}</label>
+    <select id="enq-extra" name={extra.name}>
+      {extra.options.map((o) => <option>{o}</option>)}
+    </select>
+  </div>
+  <div class="field field-wide">
+    <label for="enq-msg">Anything else we should know? <span class="opt">Optional</span></label>
+    <textarea id="enq-msg" name="Message" rows="4"></textarea>
+  </div>
+  <div class="field-wide enq-foot">
+    <button class="btn btn-ink" type="submit"><Icon name="whatsapp" />Send on WhatsApp</button>
+    <p class="hint">This opens WhatsApp with your details filled in. Nothing is stored on this website. Prefer to talk? Call <a class="link" href={site.phoneHref}>{site.phoneDisplay}</a>.</p>
+  </div>
+</form>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('form.enq').forEach((form) => {
+    const name = form.querySelector<HTMLInputElement>('[name="Name"]')!;
+    const phone = form.querySelector<HTMLInputElement>('[name="Phone"]')!;
+    const rules: [HTMLInputElement, (v: string) => boolean][] = [
+      [name, (v) => v.trim().length > 1],
+      [phone, (v) => v.replace(/\D/g, '').length >= 10 && v.replace(/\D/g, '').length <= 15],
+    ];
+    const show = (el: HTMLInputElement, ok: boolean) => {
+      const err = document.getElementById(`${el.id}-err`)!;
+      err.hidden = ok;
+      el.setAttribute('aria-invalid', String(!ok));
+    };
+    for (const [el, test] of rules) {
+      // Check on leaving the field; clear the error as soon as it is fixed
+      el.addEventListener('blur', () => { if (el.value) show(el, test(el.value)); });
+      el.addEventListener('input', () => { if (el.getAttribute('aria-invalid') === 'true' && test(el.value)) show(el, true); });
+    }
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let first: HTMLInputElement | null = null;
+      for (const [el, test] of rules) {
+        const ok = test(el.value);
+        show(el, ok);
+        if (!ok && !first) first = el;
+      }
+      if (first) { first.focus(); return; }
+      const lines = [`Namaste, I am enquiring about: ${form.dataset.service}.`];
+      new FormData(form).forEach((v, k) => { if (String(v).trim()) lines.push(`${k}: ${String(v).trim()}`); });
+      window.open(`https://wa.me/917737633333?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
+    });
+  });
+</script>
+
+<style>
+  .enq { display: grid; grid-template-columns: 1fr 1fr; gap: 20px var(--gutter); }
+  .field { display: grid; gap: 6px; align-content: start; }
+  .field-wide { grid-column: 1 / -1; }
+  label { font-weight: 500; font-size: var(--step-small); }
+  .opt { font-weight: 400; color: var(--muted); }
+  input, select, textarea {
+    width: 100%; min-height: 52px; padding: 12px 14px; border: 0; border-radius: var(--radius);
+    background: var(--stone); box-shadow: inset 0 0 0 1px var(--stone-3);
+    transition: box-shadow var(--dur) var(--ease);
+  }
+  textarea { resize: vertical; }
+  input:hover, select:hover, textarea:hover { box-shadow: inset 0 0 0 1px var(--muted); }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--ink); }
+  [aria-invalid="true"] { box-shadow: inset 0 0 0 2px #9B2C2C; }
+  .err { color: #9B2C2C; font-size: var(--step-small); }
+  .hint { color: var(--muted); font-size: var(--step-small); }
+  .enq-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; margin-top: 8px; }
+  .enq-foot .hint { flex: 1 1 280px; max-width: 52ch; }
+  @media (max-width: 760px) {
+    .enq { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,406 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Rise from '../components/Rise.astro';
+import ContactBand from '../components/ContactBand.astro';
+import { site, whatsapp } from '../site';
+
+const wa = whatsapp();
+
+// What we build: each statement brings two small photographs onto the plot
+const build = [
+  {
+    name: 'Residential homes', href: '/services/residential',
+    say: 'Independent houses and apartments, planned around how you will live.',
+    a: { src: '/img/villa-800.jpg', w: 800, h: 533, alt: 'Representative image: a modern two-storey villa', pos: '40% 50%' },
+    b: { src: '/img/interior-800.jpg', w: 800, h: 534, alt: 'Representative image: a bright living room', pos: '50% 50%' },
+  },
+  {
+    name: 'Commercial spaces', href: '/services/commercial',
+    say: 'Shops and offices to buy or lease, built for the people who work in them.',
+    a: { src: '/img/office-800.jpg', w: 800, h: 600, alt: 'Representative image: a glass office facade', pos: '30% 50%' },
+    b: { src: '/img/office-800.jpg', w: 800, h: 600, alt: '', pos: '85% 20%' },
+  },
+  {
+    name: 'Plotted land', href: '/services/plots',
+    say: 'Plots with title checked and approvals in place before we offer them.',
+    a: { src: '/img/plot-800.jpg', w: 800, h: 538, alt: 'Representative image: a staked plot of land', pos: '90% 60%' },
+    b: { src: '/img/villa-800.jpg', w: 800, h: 533, alt: '', pos: '75% 40%' },
+  },
+  {
+    name: 'Construction on your land', href: '/services/construction',
+    say: 'Own a plot? We build on it to your plan, your budget and a written schedule.',
+    a: { src: '/img/formwork-800.jpg', w: 800, h: 600, alt: 'Representative image: walls rising in formwork on a site', pos: '30% 50%' },
+    b: { src: '/img/formwork-800.jpg', w: 800, h: 600, alt: '', pos: '90% 70%' },
+  },
+];
+
+const projects = [
+  { kind: 'Residential', say: 'Independent homes · [City] · In planning', src: '/img/villa-1600.jpg', w: 1600, h: 1067, alt: 'Representative image of a modern villa', place: 'p1' },
+  { kind: 'Commercial', say: 'Shops and offices · [City] · In planning', src: '/img/office-1024.jpg', w: 1024, h: 768, alt: 'Representative image of a glass office building', place: 'p2' },
+  { kind: 'Plots', say: 'Plotted development · [City] · In planning', src: '/img/plot-1600.jpg', w: 1600, h: 1077, alt: 'Representative image of an open plot', place: 'p3' },
+];
+
+const steps = [
+  { name: 'Find the land', say: 'We walk the site with you and check access, soil, surroundings and what can legally be built.', gap: 120 },
+  { name: 'Clear the papers', say: 'Title, approvals and registration are checked before a single brick is ordered.', gap: 56 },
+  { name: 'Design it', say: 'Plans drawn around how you will live or work, with costs agreed in writing.', gap: 140 },
+  { name: 'Build it', say: 'One team on site, with progress shared with you in dated photographs.', gap: 80 },
+  { name: 'Hand it over', say: 'Keys, documents and after-care. The legacy part is yours.', gap: 110 },
+];
+---
+<Base
+  title="Sankat Mochan Builders & Developers | From Land to Legacy"
+  description="New builders and developers for homes, commercial spaces, plots and construction on your land. Call or WhatsApp +91 77376 33333."
+>
+  <!-- Hero: three prints hanging from one line -->
+  <section class="hero grid" aria-labelledby="hero-title">
+    <figure class="h-small photo" data-shutter>
+      <img src="/img/plot-800.jpg" width="800" height="538" alt="Representative image: a staked plot of land" style="object-position: 92% 60%" />
+    </figure>
+    <div class="h-text" data-rise style="--d:200ms">
+      <h1 id="hero-title"><span>From land</span> <span>to legacy</span></h1>
+      <p>Sankat Mochan Builders &amp; Developers builds homes, commercial spaces and plotted land, and builds on yours.</p>
+      <div class="h-actions">
+        <a class="btn btn-ink" href={wa}><Icon name="whatsapp" />WhatsApp us</a>
+        <a class="btn btn-quiet" href={site.phoneHref}><Icon name="phone" />Call</a>
+      </div>
+    </div>
+    <figure class="h-tall" data-shutter style="--d:120ms">
+      <div class="photo"><img src="/img/villa-1600.jpg" width="1600" height="1067" alt="Representative image: a modern villa with a pool at dusk" style="object-position: 34% 50%" /></div>
+      <figcaption class="cap">Residential · representative image</figcaption>
+    </figure>
+    <figure class="h-wide" data-shutter style="--d:240ms">
+      <div class="photo"><img src="/img/interior-1024.jpg" width="1024" height="683" alt="Representative image: a bright living room" /></div>
+      <figcaption class="cap">Interiors · representative image</figcaption>
+    </figure>
+  </section>
+
+  <!-- What we build: one plot, and what we build on it, statement by statement -->
+  <section class="scene" aria-labelledby="build-title" style={`--n:${build.length}`}>
+    <div class="scene-stick">
+      <img class="scene-bg" src="/img/plot-1600.jpg" width="1600" height="1077" alt="" />
+      <div class="scene-scrim"></div>
+      <ol class="scene-list">
+        <li class="is-on" data-i="0"><h2 id="build-title">What we build</h2></li>
+        {build.map((b, i) => (
+          <li data-i={i + 1}>
+            <a href={b.href}>{b.name}</a>
+            <span class="scene-say">{b.say}</span>
+          </li>
+        ))}
+      </ol>
+      {build.map((b, i) => (
+        <div class="scene-pair" data-i={i + 1} aria-hidden={i === 0 ? undefined : 'true'}>
+          <div class="photo sp-a"><img src={b.a.src} width={b.a.w} height={b.a.h} alt={b.a.alt} loading="lazy" style={`object-position:${b.a.pos}`} /></div>
+          <div class="photo sp-b"><img src={b.b.src} width={b.b.w} height={b.b.h} alt="" loading="lazy" style={`object-position:${b.b.pos}`} /></div>
+        </div>
+      ))}
+    </div>
+    {[0, ...build.map((_, i) => i + 1)].map((i) => <div class="scene-mark" data-i={i}></div>)}
+  </section>
+
+  <!-- Projects: placed loosely, one at a time -->
+  <section class="work grid" aria-labelledby="work-title">
+    <h2 id="work-title" class="w-head" data-rise>Projects</h2>
+    {projects.map((p, i) => (
+      <>
+        <figure class={`w-item ${p.place}`}>
+          <p class="w-name">[PROJECT NAME] · {p.kind}</p>
+          <div class="photo" data-shutter><img src={p.src} width={p.w} height={p.h} alt={p.alt} loading="lazy" /></div>
+          <figcaption class="w-say">{p.say}<span class="w-rep"> · representative image</span></figcaption>
+        </figure>
+        {i === 1 && (
+          <p class="w-remark" data-rise>We are a new company. Our first projects are being planned now, and each will appear here with its RERA number.</p>
+        )}
+      </>
+    ))}
+    <p class="w-cta" data-rise><a class="btn btn-ink" href={whatsapp('Namaste, please tell me when your first project launches.')}><Icon name="whatsapp" />Tell me when you launch</a></p>
+  </section>
+
+  <!-- Live thing: a plot size in every unit people quote -->
+  <section class="area grid" aria-labelledby="area-title">
+    <div class="area-text" data-rise>
+      <h2 id="area-title">Your plot, in every unit</h2>
+      <p>Quoted in gaj, measured in square feet, registered in square metres? Type the size you were given and read it in all the others.</p>
+      <form class="area-form" onsubmit="return false">
+        <label for="area-n">Plot size</label>
+        <div class="area-row">
+          <input id="area-n" type="number" inputmode="decimal" min="0" step="any" value="200" />
+          <label class="sr-only" for="area-u">Unit</label>
+          <select id="area-u">
+            <option value="9" selected>gaj (sq yd)</option>
+            <option value="1">sq ft</option>
+            <option value="10.7639">sq m</option>
+            <option value="43560">acre</option>
+            <option value="107639.1">hectare</option>
+          </select>
+        </div>
+      </form>
+    </div>
+    <dl class="area-out" data-rise style="--d:90ms" aria-live="polite">
+      <div><dt>square feet</dt><dd data-u="1">1,800</dd></div>
+      <div><dt>gaj / square yards</dt><dd data-u="9">200</dd></div>
+      <div><dt>square metres</dt><dd data-u="10.7639">167.23</dd></div>
+      <div><dt>acres</dt><dd data-u="43560">0.0413</dd></div>
+    </dl>
+    <p class="area-note">Bigha and biswa differ from state to state, so we confirm them for each plot.</p>
+  </section>
+
+  <!-- How we work: a row of moments, from land to handover -->
+  <section class="steps" aria-labelledby="steps-title">
+    <div class="steps-top">
+      <h2 id="steps-title">How we work</h2>
+      <div class="steps-btns">
+        <button type="button" class="sq" data-dir="-1" aria-label="Previous step"><Icon name="arrow" /></button>
+        <button type="button" class="sq" data-dir="1" aria-label="Next step"><Icon name="arrow" /></button>
+      </div>
+    </div>
+    <div class="steps-bar" aria-hidden="true"><span></span></div>
+    <ol class="steps-row" tabindex="0" aria-label="Five steps, from land to handover">
+      {steps.map((s, i) => (
+        <li class="step" style={`--gap:${s.gap}px`}>
+          <h3>{s.name}</h3>
+          <p>{s.say}</p>
+          <div class="step-pic"><Rise stage={(i + 1) as 1 | 2 | 3 | 4 | 5} light /></div>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- About: two partners -->
+  <section class="about grid" aria-labelledby="about-title">
+    <h2 id="about-title" data-rise>Two partners, one standard</h2>
+    <p class="about-lead" data-rise style="--d:80ms">A new company started by two partners, with one aim: build what we promise, and keep it on record.</p>
+    <figure class="about-photo">
+      <div class="photo" data-shutter><img src="/img/formwork-1600.jpg" width="1600" height="1200" alt="Representative image: walls rising in formwork on a building site" loading="lazy" /></div>
+      <p class="about-note">Every drawing, approval and payment is written down and shared with you. That is the standard both partners put their names to.</p>
+    </figure>
+    <div class="about-tile">
+      <img src="/brand/sm-emblem-champagne.svg" alt="" width="200" height="77" />
+    </div>
+    <dl class="about-facts">
+      {site.partners.map((p) => <div><dt>{p.role}</dt><dd>{p.name}</dd></div>)}
+      <div><dt>Founded</dt><dd>[PLACEHOLDER: year]</dd></div>
+      <div><dt>Based in</dt><dd>{site.city}</dd></div>
+    </dl>
+  </section>
+
+  <ContactBand />
+</Base>
+
+<script>
+  // Area converter: everything goes through square feet
+  const n = document.getElementById('area-n') as HTMLInputElement;
+  const u = document.getElementById('area-u') as HTMLSelectElement;
+  const outs = document.querySelectorAll<HTMLElement>('.area-out dd');
+  const fmt = (v: number) => v.toLocaleString('en-IN', { maximumFractionDigits: v < 1 ? 4 : 2 });
+  const update = () => {
+    const sqft = (parseFloat(n.value) || 0) * parseFloat(u.value);
+    outs.forEach((o) => (o.textContent = fmt(sqft / parseFloat(o.dataset.u!))));
+  };
+  n.addEventListener('input', update);
+  u.addEventListener('change', update);
+  update();
+
+  // What we build: the active statement follows the scroll
+  const scene = document.querySelector<HTMLElement>('.scene')!;
+  const setActive = (i: string) => {
+    scene.querySelectorAll('[data-i]').forEach((el) => {
+      if (el.classList.contains('scene-mark')) return;
+      el.classList.toggle('is-on', (el as HTMLElement).dataset.i === i);
+    });
+  };
+  const so = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) setActive((e.target as HTMLElement).dataset.i!);
+  }, { rootMargin: '-50% 0px -50% 0px' });
+  scene.querySelectorAll('.scene-mark').forEach((m) => so.observe(m));
+  scene.classList.add('is-live');
+
+  // How we work: buttons step the row, the bar shows how far it has scrolled
+  const row = document.querySelector<HTMLElement>('.steps-row')!;
+  const bar = document.querySelector<HTMLElement>('.steps-bar span')!;
+  const step = () => (row.querySelector('.step') as HTMLElement).offsetWidth + 32;
+  document.querySelectorAll<HTMLButtonElement>('.steps-btns .sq').forEach((b) =>
+    b.addEventListener('click', () => row.scrollBy({ left: step() * Number(b.dataset.dir), behavior: 'smooth' })));
+  const progress = () => {
+    const max = row.scrollWidth - row.clientWidth;
+    bar.style.transform = `scaleX(${max > 0 ? Math.max(0.12, row.scrollLeft / max) : 1})`;
+  };
+  row.addEventListener('scroll', progress, { passive: true });
+  progress();
+</script>
+
+<style>
+  h2 { font-size: var(--step-heading); }
+
+  /* Hero */
+  .hero { align-items: start; padding-top: clamp(24px, 6vh, 64px); padding-bottom: var(--section-gap); row-gap: 0; }
+  .h-small { grid-column: 1 / 3; grid-row: 1; aspect-ratio: 1; }
+  .h-text { grid-column: 1 / 4; grid-row: 2; margin-top: 32px; display: grid; gap: 20px; align-content: start; }
+  .h-text h1 { font-size: clamp(2.5rem, 4.4vw, 4.5rem); line-height: .95; letter-spacing: -.02em; white-space: nowrap; }
+  .h-text h1 span { display: block; }
+  .h-text p { max-width: 32ch; }
+  .h-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .h-tall { grid-column: 4 / 10; grid-row: 1 / 3; }
+  .h-tall .photo { aspect-ratio: 4 / 5; max-height: 78svh; }
+  .h-wide { grid-column: 10 / 13; grid-row: 1 / 3; margin-right: calc(-1 * var(--margin)); }
+  .h-wide .photo { aspect-ratio: 4 / 5; }
+  .h-wide .cap { padding-right: var(--margin); }
+  .h-tall:hover img, .h-wide:hover img, .h-small:hover img { transform: scale(1.03); }
+
+  /* What we build */
+  .scene { position: relative; height: calc(100svh + var(--n) * 75svh); background: var(--ink); }
+  .scene-stick { position: sticky; top: 0; height: 100svh; overflow: hidden; color: var(--stone); }
+  .scene-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 60%; }
+  .scene-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(18 22 20 / .84) 0%, rgb(18 22 20 / .7) 34%, rgb(18 22 20 / 0) 60%); } /* taste-skill-ignore: scrim over a photo */
+  .scene-list { position: relative; z-index: 2; margin: 0 auto; padding-top: clamp(56px, 10vh, 112px); width: min(560px, 100% - 2 * var(--margin)); display: grid; gap: 10px; text-align: center; }
+  .scene-list li { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.125rem, 1.2vw + .6rem, 1.5rem); line-height: 1.2; color: #B9BDB6; transition: color var(--dur) var(--ease); }
+  .scene-list h2 { font-size: inherit; font-weight: inherit; }
+  .scene-list a { text-decoration: none; }
+  .scene-list a:hover { text-decoration: underline; }
+  .scene-list li.is-on { color: var(--stone); }
+  .scene-say { display: block; max-height: 0; overflow: hidden; font-family: var(--font-text); font-size: var(--step-text); color: var(--stone); opacity: 0; transition: max-height 400ms var(--ease), opacity 400ms var(--ease); }
+  .scene-list li.is-on .scene-say { max-height: 4em; opacity: 1; margin-top: 4px; }
+  .scene-pair { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+  .scene-pair .photo { position: absolute; opacity: 0; transform: translateY(24px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
+  .scene-pair.is-on .photo { opacity: 1; transform: none; }
+  .scene-pair.is-on .sp-b { transition-delay: 120ms; }
+  .sp-a { left: var(--margin); top: 52%; width: clamp(160px, 17vw, 260px); aspect-ratio: 4 / 5; }
+  .sp-b { right: var(--margin); top: 64%; width: clamp(160px, 15vw, 230px); aspect-ratio: 1; }
+  .scene-mark { position: absolute; left: 0; width: 1px; height: 75svh; top: calc(50svh + var(--k, 0) * 75svh); }
+  .scene-mark[data-i="0"] { --k: -0.6; }
+  .scene-mark[data-i="1"] { --k: 0.4; }
+  .scene-mark[data-i="2"] { --k: 1.4; }
+  .scene-mark[data-i="3"] { --k: 2.4; }
+  .scene-mark[data-i="4"] { --k: 3.4; }
+  /* Without script every statement and description shows */
+  .scene:not(.is-live) .scene-list li { color: var(--stone); }
+  .scene:not(.is-live) .scene-say { max-height: none; opacity: 1; }
+
+  /* Projects */
+  .work { padding-block: clamp(96px, 9vw, 150px); row-gap: 0; }
+  .w-head { grid-column: 1 / -1; margin-bottom: 64px; }
+  .w-item { position: relative; }
+  .w-name { font-size: var(--step-small); color: var(--muted); margin-bottom: 10px; }
+  .w-say { margin-top: 12px; font-size: clamp(15px, 1.1vw, 17px); }
+  .w-rep { color: var(--muted); }
+  .w-item .photo:hover img { transform: scale(1.03); }
+  .p1 { grid-column: 1 / 7; }
+  .p1 .photo { aspect-ratio: 3 / 2; }
+  .p2 { grid-column: 8 / 13; margin-top: -40px; }
+  .p2 .photo { aspect-ratio: 4 / 5; }
+  .p3 { grid-column: 3 / 10; margin-top: 96px; }
+  .p3 .photo { aspect-ratio: 16 / 9; }
+  .w-remark { grid-column: 2 / 6; grid-row: 3; align-self: center; font-size: 1.25rem; line-height: 1.4; max-width: 30ch; }
+  .p2 { grid-row: 3; }
+  .p1 { grid-row: 2; }
+  .p3 { grid-row: 4; }
+  .w-cta { grid-column: 3 / 10; grid-row: 5; margin-top: 56px; }
+
+  /* Area converter */
+  .area { background: var(--stone-2); padding-block: clamp(80px, 9vw, 140px); row-gap: 40px; align-items: end; }
+  .area-text { grid-column: 1 / 6; display: grid; gap: 18px; }
+  .area-text p { max-width: 44ch; }
+  .area-form { display: grid; gap: 8px; margin-top: 8px; }
+  .area-form > label { font-size: var(--step-small); color: var(--muted); }
+  .area-row { display: flex; gap: 8px; }
+  .area-row input, .area-row select { min-height: 56px; border: 0; border-radius: var(--radius); background: var(--stone); padding: 0 16px; }
+  .area-row input { width: 9ch; font-family: var(--font-display); font-weight: 600; font-size: 1.5rem; }
+  .area-row select { flex: 1; max-width: 220px; cursor: pointer; }
+  .area-out { grid-column: 7 / -1; margin: 0; display: grid; gap: 4px; }
+  .area-out div { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; background: var(--stone); padding: 18px 20px; }
+  .area-out dt { color: var(--muted); font-size: var(--step-small); }
+  .area-out dd { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(2rem, 3.2vw, 3.25rem); line-height: 1; color: var(--forest); font-variant-numeric: tabular-nums; }
+  .area-note { grid-column: 7 / -1; font-size: var(--step-small); color: var(--muted); margin-top: -24px; }
+
+  /* How we work */
+  .steps { padding-block: clamp(80px, 9vw, 150px); }
+  .steps-top { display: flex; align-items: end; justify-content: space-between; gap: 24px; padding-inline: var(--margin); }
+  .steps-btns { display: flex; gap: 8px; }
+  .sq { width: 48px; height: 48px; display: grid; place-items: center; background: var(--ink); color: var(--stone); border: 0; cursor: pointer; transition: background-color var(--dur) var(--ease); }
+  .sq:hover { background: var(--forest); }
+  .sq :global(svg) { width: 20px; }
+  .sq[data-dir="-1"] :global(svg) { transform: rotate(180deg); }
+  .steps-bar { margin: 28px var(--margin) 40px; height: 6px; background: var(--stone-3); }
+  .steps-bar span { display: block; height: 100%; background: var(--ink); transform-origin: left; transform: scaleX(.12); transition: transform 200ms linear; }
+  .steps-row { display: flex; gap: 32px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 var(--margin) 8px; scroll-padding-inline: var(--margin); scrollbar-width: none; }
+  .steps-row::-webkit-scrollbar { display: none; }
+  .step { flex: 0 0 300px; scroll-snap-align: start; display: flex; flex-direction: column; }
+  .step h3 { font-family: var(--font-text); font-weight: 500; font-size: 1.125rem; letter-spacing: 0; line-height: 1.3; }
+  .step p { margin-top: 8px; line-height: 1.5; }
+  .step-pic { margin-top: var(--gap); aspect-ratio: 4 / 3; background: var(--stone-2); display: flex; align-items: flex-end; padding: 8% 6% 6%; }
+  @media (min-width: 1100px) {
+    .steps-btns, .steps-bar { display: none; }
+    .steps-top { margin-bottom: 56px; }
+    .steps-row { overflow: visible; }
+    .step { flex: 1 1 0; min-width: 0; }
+  }
+
+  /* About */
+  .about { padding-block: 0 var(--section-gap); row-gap: 0; align-items: start; }
+  .about h2 { grid-column: 1 / -1; }
+  .about-lead { grid-column: 1 / 7; margin-top: 24px; font-size: var(--step-lead); line-height: 1.35; max-width: 36ch; }
+  .about-photo { grid-column: 1 / 9; margin-top: 72px; position: relative; }
+  .about-photo .photo { aspect-ratio: 16 / 10; }
+  .about-note { position: absolute; top: 0; right: 0; width: min(320px, 60%); background: var(--stone); padding: 20px; font-size: var(--step-text); }
+  .about-tile { grid-column: 9 / 13; margin-top: 72px; aspect-ratio: 16 / 15.6; background: var(--forest); display: grid; place-items: center; }
+  .about-tile img { width: 52%; }
+  .about-facts { grid-column: 9 / 13; margin: 20px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px var(--gutter); align-self: start; grid-row: 4; }
+  .about-tile { grid-row: 3; }
+  .about-photo { grid-row: 3 / 5; }
+  .about-facts dt { font-size: var(--step-small); color: var(--muted); }
+  .about-facts dd { margin: 2px 0 0; font-weight: 500; overflow-wrap: anywhere; }
+  .about-facts div { min-width: 0; }
+
+  /* Tablet and phone */
+  @media (max-width: 1024px) {
+    .h-small { grid-column: 1 / 4; }
+    .h-text { grid-column: 1 / 5; }
+    .h-tall { grid-column: 5 / 11; }
+    .h-wide { grid-column: 11 / 13; }
+  }
+  @media (max-width: 760px) {
+    .hero { padding-top: 8px; }
+    .h-tall { grid-column: 1 / 10; grid-row: 1; }
+    .h-tall .photo { max-height: none; }
+    .h-small { grid-column: 8 / 13; grid-row: 2; margin-top: -40px; position: relative; }
+    .h-text { grid-column: 1 / -1; grid-row: 3; margin-top: 24px; }
+    .h-text h1 { font-size: 11vw; max-width: none; }
+    .h-wide { grid-column: 1 / -1; grid-row: 4; margin: 40px calc(-1 * var(--margin)) 0; }
+    .h-wide .photo { aspect-ratio: 16 / 10; }
+    .h-wide .cap { padding-inline: var(--margin); }
+    .h-tall .cap { display: none; }
+
+    .scene-list { padding-top: 0; position: absolute; left: var(--margin); right: var(--margin); bottom: 96px; width: auto; text-align: left; }
+    .scene-list li { font-size: 1.0625rem; }
+    .scene-scrim { background: linear-gradient(0deg, rgb(18 22 20 / .86) 0%, rgb(18 22 20 / .72) 45%, rgb(18 22 20 / 0) 70%); } /* taste-skill-ignore: scrim over a photo */
+    .sp-a { left: auto; right: 16px; top: 16px; width: 44vw; }
+    .sp-b { display: none; }
+
+    .w-head { margin-bottom: 40px; }
+    .p1, .p2, .p3, .w-remark, .w-cta { grid-row: auto; margin-top: 0; }
+    .p1 { grid-column: 1 / -1; }
+    .p2 { grid-column: 4 / -1; margin-top: 72px; }
+    .w-remark { grid-column: 1 / -1; margin-top: 72px; font-size: 1.125rem; }
+    .p3 { grid-column: 1 / 11; margin-top: 72px; }
+    .w-cta { grid-column: 1 / -1; margin-top: 48px; }
+
+    .area-text, .area-out, .area-note { grid-column: 1 / -1; }
+    .area-note { margin-top: -20px; }
+
+    .steps-btns { display: none; }
+    .step { flex-basis: 72vw; }
+    .step-pic { margin-top: calc(var(--gap) * .45); }
+    .steps-row { gap: 16px; }
+
+    .about h2 { font-size: 9vw; }
+    .about-lead { grid-column: 1 / -1; font-size: 1.125rem; }
+    .about-photo, .about-tile, .about-facts { grid-column: 1 / -1; grid-row: auto; }
+    .about-photo { margin-top: 40px; }
+    .about-photo .photo { aspect-ratio: 4 / 3; }
+    .about-note { position: static; width: auto; padding: 16px 0 0; }
+    .about-tile { margin-top: 32px; aspect-ratio: 3 / 2; }
+
+  }
+</style>

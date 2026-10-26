@@ -1,0 +1,41 @@
+---
+// The closing contact band: the page's touch of forest green, shared by every page.
+import { site, whatsapp } from '../site';
+
+interface Props { line?: string; waText?: string }
+const { line = 'Buying a plot, planning a home or looking for shop space? Tell us what you need.', waText } = Astro.props;
+const wa = whatsapp(waText);
+---
+<section class="talk grid on-forest" aria-labelledby="talk-title">
+  <h2 id="talk-title" class="sr-only">Contact</h2>
+  <p class="talk-line" data-rise>{line}</p>
+  <div class="talk-pic photo" data-shutter><img src="/img/villa-800.jpg" width="800" height="533" alt="Representative image of a modern home" loading="lazy" style="object-position: 30% 50%" /></div>
+  <div class="talk-links" data-rise style="--d:120ms">
+    <p class="talk-q">Prefer to talk now?</p>
+    <a class="link" href={site.phoneHref}>{site.phoneDisplay}</a>
+    <a class="link" href={wa}>WhatsApp us</a>
+    <a class="link" href={`mailto:${site.email}`}>{site.email}</a>
+    <p class="talk-meta">{site.city} · {site.hours}</p>
+  </div>
+</section>
+
+<style>
+  .talk { background: var(--forest); color: var(--on-forest); padding-block: 160px 120px; align-items: start; }
+  .talk-line { grid-column: 1 / 6; font-family: var(--font-display); font-weight: 500; font-size: clamp(1.625rem, 2.4vw, 2.25rem); line-height: 1.15; }
+  .talk-pic { grid-column: 8 / 10; aspect-ratio: 1; max-width: 170px; }
+  .talk-links { grid-column: 10 / 13; display: grid; gap: 8px; justify-items: start; font-size: 1.125rem; }
+  .talk-q { font-weight: 500; margin-bottom: 12px; }
+  .talk-links a { color: var(--champ); }
+  .talk-meta { margin-top: 12px; font-size: var(--step-small); color: var(--soft-on-forest); }
+  @media (max-width: 1024px) {
+    .talk-line { grid-column: 1 / 8; }
+    .talk-pic { grid-column: 9 / 11; }
+    .talk-links { grid-column: 9 / 13; grid-row: 2; }
+  }
+  @media (max-width: 760px) {
+    .talk { padding-block: 88px 72px; row-gap: 32px; }
+    .talk-line { grid-column: 1 / -1; font-size: 1.5rem; }
+    .talk-pic { grid-column: 1 / 4; max-width: 96px; }
+    .talk-links { grid-column: 4 / -1; padding-left: 8px; grid-row: auto; }
+  }
+</style>

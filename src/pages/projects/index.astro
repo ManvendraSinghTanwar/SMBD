@@ -1,0 +1,170 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import ContactBand from '../../components/ContactBand.astro';
+import { projects } from '../../data/projects';
+import { whatsapp } from '../../site';
+
+const uniq = (xs: string[]) => [...new Set(xs)];
+const types = uniq(projects.map((p) => p.type));
+const cities = uniq(projects.map((p) => p.city));
+const statuses = uniq(projects.map((p) => p.status));
+const anySample = projects.some((p) => p.sample);
+---
+<Base
+  title="Projects | Sankat Mochan Builders & Developers"
+  description="Residential, commercial and plotted projects by Sankat Mochan Builders & Developers, each with its RERA number. Filter by type, city and status."
+>
+  <section class="p-hero grid" aria-labelledby="proj-title">
+    <div class="p-hero-text" data-rise>
+      <h1 id="proj-title">Projects</h1>
+      <p class="p-lead">Every project, with its location, status and RERA number.</p>
+    </div>
+    <div class="p-hero-side" data-rise style="--d:100ms">
+      {anySample && <p>We are a new company and our first projects are being planned. The entries below are sample layouts that show what each project page will hold.</p>}
+      <a class="btn btn-ink" href={whatsapp('Namaste, please tell me when your first project launches.')}><Icon name="whatsapp" />Tell me when you launch</a>
+    </div>
+  </section>
+
+  <section class="p-list grid" aria-labelledby="list-title">
+    <h2 id="list-title" class="sr-only">Project list</h2>
+    <form class="filters" aria-label="Filter projects" onsubmit="return false">
+      <div class="f-group" role="group" aria-labelledby="f-type-label">
+        <span id="f-type-label" class="f-label">Type</span>
+        <div class="chips">
+          <button type="button" class="chip" data-type="" aria-pressed="true">All</button>
+          {types.map((t) => <button type="button" class="chip" data-type={t} aria-pressed="false">{t}</button>)}
+        </div>
+      </div>
+      <div class="f-group">
+        <label class="f-label" for="f-city">City</label>
+        <select id="f-city">
+          <option value="">All cities</option>
+          {cities.map((c) => <option value={c}>{c}</option>)}
+        </select>
+      </div>
+      <div class="f-group">
+        <label class="f-label" for="f-status">Status</label>
+        <select id="f-status">
+          <option value="">Any status</option>
+          {statuses.map((s) => <option value={s}>{s}</option>)}
+        </select>
+      </div>
+      <p class="f-count" aria-live="polite"><span id="f-n">{projects.length}</span> <span id="f-word">{projects.length === 1 ? 'project' : 'projects'}</span></p>
+    </form>
+
+    <ul class="cards">
+      {projects.map((p, i) => (
+        <li class="proj" data-type={p.type} data-city={p.city} data-status={p.status} data-rise style={`--d:${(i % 2) * 90}ms`}>
+          <a href={`/projects/${p.slug}`}>
+            <div class="photo"><img src={p.hero.src} width={p.hero.w} height={p.hero.h} alt="" loading={i < 2 ? undefined : 'lazy'} /></div>
+            <h3>{p.name}{p.sample && <span class="sample"> · sample</span>}</h3>
+          </a>
+          <p class="meta">{p.type} · {p.city} · {p.status}</p>
+          <p>{p.summary}</p>
+          <p class="rera">RERA: {p.rera}</p>
+        </li>
+      ))}
+    </ul>
+
+    <div class="empty" hidden>
+      <p class="empty-head">No projects match these filters.</p>
+      <p>Try another city or status, or see every project.</p>
+      <button type="button" class="btn btn-ink" id="f-clear">Clear filters</button>
+    </div>
+  </section>
+
+  <ContactBand line="Looking for something we have not listed yet? Tell us what you need and we will tell you what is coming." />
+</Base>
+
+<script>
+  const items = [...document.querySelectorAll<HTMLElement>('.proj')];
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('.chip')];
+  const city = document.getElementById('f-city') as HTMLSelectElement;
+  const status = document.getElementById('f-status') as HTMLSelectElement;
+  const n = document.getElementById('f-n')!;
+  const word = document.getElementById('f-word')!;
+  const empty = document.querySelector<HTMLElement>('.empty')!;
+  let type = '';
+
+  const apply = (push = true) => {
+    let shown = 0;
+    for (const el of items) {
+      const ok = (!type || el.dataset.type === type) && (!city.value || el.dataset.city === city.value) && (!status.value || el.dataset.status === status.value);
+      el.hidden = !ok;
+      if (ok) shown++;
+    }
+    chips.forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.type === type)));
+    n.textContent = String(shown);
+    word.textContent = shown === 1 ? 'project' : 'projects';
+    empty.hidden = shown > 0;
+    if (push) {
+      const q = new URLSearchParams();
+      if (type) q.set('type', type);
+      if (city.value) q.set('city', city.value);
+      if (status.value) q.set('status', status.value);
+      history.replaceState(null, '', q.toString() ? `?${q}` : location.pathname);
+    }
+  };
+
+  // Read filters from the address so a filtered list can be shared
+  const q = new URLSearchParams(location.search);
+  type = chips.some((c) => c.dataset.type === q.get('type')) ? q.get('type')! : '';
+  if ([...city.options].some((o) => o.value === q.get('city'))) city.value = q.get('city')!;
+  if ([...status.options].some((o) => o.value === q.get('status'))) status.value = q.get('status')!;
+
+  chips.forEach((c) => c.addEventListener('click', () => { type = c.dataset.type!; apply(); }));
+  city.addEventListener('change', () => apply());
+  status.addEventListener('change', () => apply());
+  document.getElementById('f-clear')!.addEventListener('click', () => { type = ''; city.value = ''; status.value = ''; apply(); });
+  document.querySelector('.filters')!.classList.add('is-live');
+  apply(false);
+</script>
+
+<style>
+  .p-hero { padding-block: clamp(32px, 6vh, 64px) clamp(56px, 6vw, 96px); align-items: end; row-gap: 32px; }
+  .p-hero-text { grid-column: 1 / 7; display: grid; gap: 16px; }
+  .p-hero-text h1 { font-size: clamp(3rem, 7vw, 7.5rem); line-height: .9; letter-spacing: -.03em; }
+  .p-lead { font-size: var(--step-lead); line-height: 1.3; max-width: 30ch; }
+  .p-hero-side { grid-column: 8 / 13; display: grid; gap: 20px; justify-items: start; }
+  .p-hero-side p { max-width: 46ch; }
+
+  .p-list { padding-bottom: var(--section-gap); row-gap: 40px; }
+  .filters { grid-column: 1 / -1; display: none; flex-wrap: wrap; align-items: end; gap: 20px 32px; background: var(--stone-2); padding: 20px; }
+  .filters.is-live { display: flex; }
+  .f-group { display: grid; gap: 8px; }
+  .f-label { font-size: var(--step-small); font-weight: 500; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { min-height: 44px; padding: 0 16px; border: 0; background: var(--stone); cursor: pointer; font-weight: 500; transition: background-color var(--dur) var(--ease); }
+  .chip:hover { background: var(--stone-3); }
+  .chip[aria-pressed="true"] { background: var(--ink); color: var(--stone); }
+  select { min-height: 44px; min-width: 180px; padding: 0 12px; border: 0; background: var(--stone); cursor: pointer; }
+  .f-count { margin-left: auto; align-self: center; font-weight: 500; }
+
+  .cards { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 72px var(--gutter); }
+  .proj[hidden] { display: none; }
+  .proj a { text-decoration: none; display: grid; gap: 16px; }
+  .proj .photo { aspect-ratio: 3 / 2; }
+  .proj a:hover img { transform: scale(1.03); }
+  .proj a:hover h3 { text-decoration: underline; }
+  .proj h3 { font-size: clamp(1.5rem, 1.6vw + .8rem, 2.25rem); }
+  .sample { color: var(--muted); font-weight: 500; }
+  .meta { margin-top: 8px; font-weight: 500; }
+  .proj p:not(.meta) { margin-top: 4px; }
+  .rera { color: var(--muted); font-size: var(--step-small); }
+  .proj:nth-child(even) { margin-top: 120px; }
+
+  .empty { grid-column: 1 / -1; display: grid; gap: 12px; justify-items: start; background: var(--stone-2); padding: 48px 32px; }
+  .empty[hidden] { display: none; }
+  .empty-head { font-family: var(--font-display); font-weight: 600; font-size: var(--step-lead); }
+
+  @media (max-width: 760px) {
+    .p-hero-text, .p-hero-side { grid-column: 1 / -1; }
+    .p-hero-text h1 { font-size: 16vw; }
+    .filters { padding: 16px; }
+    .f-group, select { width: 100%; }
+    .f-count { margin-left: 0; }
+    .cards { grid-template-columns: 1fr; gap: 56px; }
+    .proj:nth-child(even) { margin-top: 0; }
+  }
+</style>
